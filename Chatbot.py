@@ -4,22 +4,25 @@ from streaming import StreamHandler
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationChain
+import os
 
 load_dotenv()
 
 st.set_page_config(page_title="Chatbot", page_icon="💬")
 st.header('Basic Chatbot')
 
+
 class Basic:
 
     def __init__(self):
         self.openai_model = "gpt-3.5-turbo"
-    
+
     def setup_chain(self):
-        llm = ChatOpenAI( model_name=self.openai_model, temperature=0, streaming=True)
+        llm = ChatOpenAI(openai_api_key=os.getenv(
+            "OPENAI_API_KEY"), model_name=self.openai_model, temperature=0, streaming=True)
         chain = ConversationChain(llm=llm, verbose=True)
         return chain
-    
+
     @utils.enable_chat_history
     def main(self):
         chain = self.setup_chain()
@@ -29,8 +32,18 @@ class Basic:
             with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
                 response = chain.run(user_query, callbacks=[st_cb])
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": response})
+
 
 if __name__ == "__main__":
     obj = Basic()
     obj.main()
+
+    hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)

@@ -5,6 +5,7 @@ __pycache__/
 
 # data
 data
+test.py
 
 # C extensions
 *.so
