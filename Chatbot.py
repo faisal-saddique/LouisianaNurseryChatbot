@@ -1,9 +1,11 @@
 import utils
 import streamlit as st
 from streaming import StreamHandler
-
+from dotenv import load_dotenv
 from langchain.llms import OpenAI
 from langchain.chains import ConversationChain
+
+load_dotenv()
 
 st.set_page_config(page_title="Chatbot", page_icon="💬")
 st.header('Basic Chatbot')
@@ -11,11 +13,10 @@ st.header('Basic Chatbot')
 class Basic:
 
     def __init__(self):
-        self.openai_api_key = ""
         self.openai_model = "gpt-3.5-turbo"
     
     def setup_chain(self):
-        llm = OpenAI(openai_api_key=self.openai_api_key, model_name=self.openai_model, temperature=0, streaming=True)
+        llm = OpenAI( model_name=self.openai_model, temperature=0, streaming=True)
         chain = ConversationChain(llm=llm, verbose=True)
         return chain
     
