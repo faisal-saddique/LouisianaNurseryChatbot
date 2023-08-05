@@ -11,7 +11,7 @@ st.header('Basic Chatbot')
 class Basic:
 
     def __init__(self):
-        self.openai_api_key = "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"
+        self.openai_api_key = ""
         self.openai_model = "gpt-3.5-turbo"
     
     def setup_chain(self):
