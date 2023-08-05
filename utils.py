@@ -4,7 +4,6 @@ import streamlit as st
 
 #decorator
 def enable_chat_history(func):
-
     # to clear chat history after swtching chatbot
     current_page = func.__qualname__
     if "current_page" not in st.session_state:
@@ -21,7 +20,10 @@ def enable_chat_history(func):
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
     for msg in st.session_state["messages"]:
-        st.chat_message(msg["role"]).write(msg["content"])
+        if msg["role"] == "assistant":
+            st.chat_message(msg["role"],avatar="./assets/boom.png").write(msg["content"])
+        else:
+            st.chat_message(msg["role"]).write(msg["content"])
 
     def execute(*args, **kwargs):
         func(*args, **kwargs)
@@ -36,19 +38,3 @@ def display_msg(msg, author):
     """
     st.session_state.messages.append({"role": author, "content": msg})
     st.chat_message(author).write(msg)
-
-# def configure_openai_api_key():
-#     openai_api_key = st.sidebar.text_input(
-#         label="OpenAI API Key",
-#         type="password",
-#         value=st.session_state['OPENAI_API_KEY'] if 'OPENAI_API_KEY' in st.session_state else '',
-#         placeholder="sk-..."
-#         )
-#     if openai_api_key:
-#         st.session_state['OPENAI_API_KEY'] = openai_api_key
-#         os.environ['OPENAI_API_KEY'] = openai_api_key
-#     else:
-#         st.error("Please add your OpenAI API key to continue.")
-#         st.info("Obtain your key from this link: https://platform.openai.com/account/api-keys")
-#         st.stop()
-#     return openai_api_key

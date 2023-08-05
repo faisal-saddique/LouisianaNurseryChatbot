@@ -1,43 +1,69 @@
 import utils
 import streamlit as st
 from streaming import StreamHandler
-from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationChain
-import os
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationalRetrievalChain
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
+from dotenv import load_dotenv
 
 load_dotenv()
 
-st.set_page_config(page_title="Chatbot", page_icon="💬")
-st.header('Basic Chatbot')
+st.set_page_config(page_title="Louisiana Nursery", page_icon="💬")
 
+st.header('Gizmo')
 
-class Basic:
+# Create OpenAIEmbeddings object using the provided API key
+embeddings = OpenAIEmbeddings()
+
+class CustomDataChatbot:
 
     def __init__(self):
         self.openai_model = "gpt-3.5-turbo"
 
-    def setup_chain(self):
-        llm = ChatOpenAI(openai_api_key=os.getenv(
-            "OPENAI_API_KEY"), model_name=self.openai_model, temperature=0, streaming=True)
-        chain = ConversationChain(llm=llm, verbose=True)
-        return chain
+    @st.spinner('Analyzing documents..')
+    def setup_qa_chain(self):
+
+        vectordb =  FAISS.load_local("index\louisiana_nursery_chatbot_vectorstore", embeddings)
+
+        # Define retriever
+        retriever = vectordb.as_retriever(
+            search_type='mmr',
+            search_kwargs={'k':2}
+        )
+
+        # Setup memory for contextual conversation        
+        memory = ConversationBufferMemory(
+            memory_key='chat_history',
+            return_messages=True
+        )
+
+        # Setup LLM and QA chain
+        llm = ChatOpenAI(model_name=self.openai_model, temperature=0, streaming=True)
+        qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever=retriever, memory=memory, verbose=True)
+        return qa_chain
+
 
     @utils.enable_chat_history
     def main(self):
-        chain = self.setup_chain()
-        user_query = st.chat_input(placeholder="Ask me anything!")
-        if user_query:
-            utils.display_msg(user_query, 'user')
-            with st.chat_message("assistant"):
-                st_cb = StreamHandler(st.empty())
-                response = chain.run(user_query, callbacks=[st_cb])
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": response})
 
+        user_query = st.chat_input(placeholder="Ask me anything!")
+
+        if user_query:
+            qa_chain = self.setup_qa_chain()
+
+            utils.display_msg(user_query, 'user')
+
+            with st.chat_message("assistant",avatar="./assets/boom.png"):
+                st_cb = StreamHandler(st.empty())
+                response = qa_chain.run(user_query, callbacks=[st_cb])
+                st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":
-    obj = Basic()
+    
+    obj = CustomDataChatbot()
     obj.main()
 
     hide_streamlit_style = """

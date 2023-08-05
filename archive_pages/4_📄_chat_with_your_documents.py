@@ -11,6 +11,18 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.vectorstores import DocArrayInMemorySearch
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.chains.question_answering import load_qa_chain
+from langchain.llms import OpenAI
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Create OpenAIEmbeddings object using the provided API key
+embeddings = OpenAIEmbeddings()
+
 st.set_page_config(page_title="ChatPDF", page_icon="📄")
 st.header('Chat with your documents')
 st.write('Has access to custom documents and can respond to user queries by referring to the content within those documents')
@@ -19,38 +31,12 @@ st.write('[![view source code ](https://img.shields.io/badge/view_source_code-gr
 class CustomDataChatbot:
 
     def __init__(self):
-        utils.configure_openai_api_key()
         self.openai_model = "gpt-3.5-turbo"
 
-    def save_file(self, file):
-        folder = 'tmp'
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        
-        file_path = f'./{folder}/{file.name}'
-        with open(file_path, 'wb') as f:
-            f.write(file.getvalue())
-        return file_path
-
     @st.spinner('Analyzing documents..')
-    def setup_qa_chain(self, uploaded_files):
-        # Load documents
-        docs = []
-        for file in uploaded_files:
-            file_path = self.save_file(file)
-            loader = PyPDFLoader(file_path)
-            docs.extend(loader.load())
-        
-        # Split documents
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1500,
-            chunk_overlap=200
-        )
-        splits = text_splitter.split_documents(docs)
+    def setup_qa_chain(self):
 
-        # Create embeddings and store in vectordb
-        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-        vectordb = DocArrayInMemorySearch.from_documents(splits, embeddings)
+        vectordb =  FAISS.load_local("index\louisiana_nursery_chatbot_vectorstore", embeddings)
 
         # Define retriever
         retriever = vectordb.as_retriever(
@@ -72,16 +58,10 @@ class CustomDataChatbot:
     @utils.enable_chat_history
     def main(self):
 
-        # User Inputs
-        uploaded_files = st.sidebar.file_uploader(label='Upload PDF files', type=['pdf'], accept_multiple_files=True)
-        if not uploaded_files:
-            st.error("Please upload PDF documents to continue!")
-            st.stop()
-
         user_query = st.chat_input(placeholder="Ask me anything!")
 
-        if uploaded_files and user_query:
-            qa_chain = self.setup_qa_chain(uploaded_files)
+        if user_query:
+            qa_chain = self.setup_qa_chain()
 
             utils.display_msg(user_query, 'user')
 
