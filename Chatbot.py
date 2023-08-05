@@ -26,7 +26,7 @@ class CustomDataChatbot:
     @st.spinner('Analyzing documents..')
     def setup_qa_chain(self):
 
-        vectordb =  FAISS.load_local("index\louisiana_nursery_chatbot_vectorstore", embeddings)
+        vectordb =  FAISS.load_local("index/louisiana_nursery_chatbot_vectorstore", embeddings)
 
         # Define retriever
         retriever = vectordb.as_retriever(
