@@ -2,7 +2,7 @@ import utils
 import streamlit as st
 from streaming import StreamHandler
 from dotenv import load_dotenv
-from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationChain
 
 load_dotenv()
@@ -16,7 +16,7 @@ class Basic:
         self.openai_model = "gpt-3.5-turbo"
     
     def setup_chain(self):
-        llm = OpenAI( model_name=self.openai_model, temperature=0, streaming=True)
+        llm = ChatOpenAI( model_name=self.openai_model, temperature=0, streaming=True)
         chain = ConversationChain(llm=llm, verbose=True)
         return chain
     
