@@ -28,7 +28,7 @@ class CustomDataChatbot:
     def setup_qa_chain(self):
 
         vectordb = FAISS.load_local(
-            "index/louisiana_nursery_chatbot_vectorstore", embeddings)
+            "louisiana_nursery_chatbot_vectorstore", embeddings)
 
         # Define retriever
         retriever = vectordb.as_retriever(
@@ -75,11 +75,7 @@ if __name__ == "__main__":
             <style>
             #MainMenu {visibility: hidden;}
             header {visibility: hidden;}
-            footer {
-	
-            visibility: hidden;
-            
-            }
+            footer {visibility: hidden;}
             footer:after {
                 content:'goodbye'; 
                 visibility: visible;

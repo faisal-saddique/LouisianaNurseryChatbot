@@ -70,7 +70,7 @@ db = FAISS.from_documents(docs, embeddings)
 # Uncomment these lines if you want to store the Vector Database locally for future use.
 # You could load it up anytime you want.
 # Save the vector database locally in a directory named "faiss_index"
-db.save_local("index/louisiana_nursery_chatbot_vectorstore")
+db.save_local("louisiana_nursery_chatbot_vectorstore")
 
 """ 
 # Create OpenAI language model
