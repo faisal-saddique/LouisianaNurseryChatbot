@@ -21,7 +21,7 @@ def enable_chat_history(func):
         st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
     for msg in st.session_state["messages"]:
         if msg["role"] == "assistant":
-            st.chat_message(msg["role"],avatar="./assets/boom.png").write(msg["content"])
+            st.chat_message(msg["role"],avatar="🤖").write(msg["content"])
         else:
             st.chat_message(msg["role"]).write(msg["content"])
 
@@ -37,4 +37,4 @@ def display_msg(msg, author):
         author (str): author of the message -user/assistant
     """
     st.session_state.messages.append({"role": author, "content": msg})
-    st.chat_message(author).write(msg)
+    st.chat_message(author,avatar="🦖").write(msg)
