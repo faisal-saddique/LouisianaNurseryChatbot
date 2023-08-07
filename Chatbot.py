@@ -18,6 +18,7 @@ st.header('Gizmo')
 # Create OpenAIEmbeddings object using the provided API key
 embeddings = OpenAIEmbeddings()
 
+
 class CustomDataChatbot:
 
     def __init__(self):
@@ -26,25 +27,27 @@ class CustomDataChatbot:
     @st.spinner('Analyzing documents..')
     def setup_qa_chain(self):
 
-        vectordb =  FAISS.load_local("index/louisiana_nursery_chatbot_vectorstore", embeddings)
+        vectordb = FAISS.load_local(
+            "index/louisiana_nursery_chatbot_vectorstore", embeddings)
 
         # Define retriever
         retriever = vectordb.as_retriever(
             search_type='mmr',
-            search_kwargs={'k':2}
+            search_kwargs={'k': 2}
         )
 
-        # Setup memory for contextual conversation        
+        # Setup memory for contextual conversation
         memory = ConversationBufferMemory(
             memory_key='chat_history',
             return_messages=True
         )
 
         # Setup LLM and QA chain
-        llm = ChatOpenAI(model_name=self.openai_model, temperature=0, streaming=True)
-        qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever=retriever, memory=memory, verbose=True)
+        llm = ChatOpenAI(model_name=self.openai_model,
+                         temperature=0, streaming=True)
+        qa_chain = ConversationalRetrievalChain.from_llm(
+            llm, retriever=retriever, memory=memory, verbose=True)
         return qa_chain
-
 
     @utils.enable_chat_history
     def main(self):
@@ -56,13 +59,15 @@ class CustomDataChatbot:
 
             utils.display_msg(user_query, 'user')
 
-            with st.chat_message("assistant",avatar="./assets/boom.png"):
+            with st.chat_message("assistant", avatar="./assets/boom.png"):
                 st_cb = StreamHandler(st.empty())
                 response = qa_chain.run(user_query, callbacks=[st_cb])
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": response})
+
 
 if __name__ == "__main__":
-    
+
     obj = CustomDataChatbot()
     obj.main()
 
@@ -70,7 +75,20 @@ if __name__ == "__main__":
             <style>
             #MainMenu {visibility: hidden;}
             header {visibility: hidden;}
-            footer {visibility: hidden;}
+            footer {
+	
+            visibility: hidden;
+            
+            }
+            footer:after {
+                content:'goodbye'; 
+                visibility: visible;
+                display: block;
+                position: relative;
+                #background-color: red;
+                padding: 5px;
+                top: 2px;
+            }
             </style>
             """
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)
