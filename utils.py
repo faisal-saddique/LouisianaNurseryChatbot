@@ -23,7 +23,7 @@ def enable_chat_history(func):
         if msg["role"] == "assistant":
             st.chat_message(msg["role"],avatar="🤖").write(msg["content"])
         else:
-            st.chat_message(msg["role"]).write(msg["content"])
+            st.chat_message(msg["role"],avatar="🦖").write(msg["content"])
 
     def execute(*args, **kwargs):
         func(*args, **kwargs)
