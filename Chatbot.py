@@ -69,6 +69,7 @@ if __name__ == "__main__":
     hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
+            header {visibility: hidden;}
             footer {visibility: hidden;}
             </style>
             """
