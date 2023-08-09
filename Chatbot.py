@@ -59,7 +59,7 @@ class CustomDataChatbot:
 
             utils.display_msg(user_query, 'user')
 
-            with st.chat_message("assistant", avatar="🤖"):
+            with st.chat_message("assistant", avatar="https://imgtr.ee/images/2023/08/09/d63ce87526fd7f310cde6eddcdc9384e.png"):
                 st_cb = StreamHandler(st.empty())
                 response = qa_chain.run(user_query, callbacks=[st_cb])
                 st.session_state.messages.append(
