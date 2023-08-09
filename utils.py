@@ -23,7 +23,7 @@ def enable_chat_history(func):
         if msg["role"] == "assistant":
             st.chat_message(msg["role"],avatar="https://imgtr.ee/images/2023/08/09/d63ce87526fd7f310cde6eddcdc9384e.png").write(msg["content"])
         else:
-            st.chat_message(msg["role"],avatar="🦖").write(msg["content"])
+            st.chat_message(msg["role"],avatar="https://imgtr.ee/images/2023/08/09/7b3d09c79862faa40b534c1b829ae996.png").write(msg["content"])
 
     def execute(*args, **kwargs):
         func(*args, **kwargs)
@@ -37,4 +37,4 @@ def display_msg(msg, author):
         author (str): author of the message -user/assistant
     """
     st.session_state.messages.append({"role": author, "content": msg})
-    st.chat_message(author,avatar="🦖").write(msg)
+    st.chat_message(author,avatar="https://imgtr.ee/images/2023/08/09/7b3d09c79862faa40b534c1b829ae996.png").write(msg)
