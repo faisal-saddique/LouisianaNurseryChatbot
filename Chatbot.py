@@ -13,7 +13,7 @@ load_dotenv()
 
 st.set_page_config(page_title="Louisiana Nursery", page_icon="https://imgtr.ee/images/2023/08/09/c7a860bf28e9c4c902a73b2e55267477.png")
 
-st.header('Gizmo')
+st.header('Gizmo Chatbot')
 
 
 # Create OpenAIEmbeddings object using the provided API key
